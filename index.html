@@ -149,6 +149,30 @@
       transition: none !important;
     }
 
+    :root {
+      --background: #f4f7fb;
+      --border: #dce4ef;
+      --secondary: #eef2f7;
+    }
+    .sf-header {
+      background-color: #ffffff;
+      border-bottom: 1px solid #d8e1ed;
+      box-shadow: 0 1px 6px rgba(15, 23, 42, 0.05);
+    }
+    .workspace-canvas {
+      background: linear-gradient(180deg, #e6ecf5 0%, #edf1f7 100%);
+    }
+    .sf-card {
+      background-color: #ffffff;
+      border: 1px solid #d8e1ed;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 14px -3px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+    #unscheduledList > div {
+      background-color: #ffffff;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    }
+
     /* Print Stylesheet: hides interactive chrome and renders clean printable schedule */
     @media print {
       body {
@@ -326,7 +350,7 @@
   <div id="appChrome" class="flex-1 flex flex-col overflow-hidden">
 
     <!-- Top Navigation & Action Bar -->
-    <header class="bg-[var(--card)] border-b border-[var(--border)] px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0 shadow-xs z-20">
+    <header class="sf-header px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0 z-20">
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 rounded-xl bg-[var(--primary)] text-[var(--primary-foreground)] flex items-center justify-center font-bold text-sm shadow-sm">
           SF
@@ -443,10 +467,10 @@
     </header>
 
     <!-- Main Workspace: Left Sidebar + Right Calendar Grid -->
-    <div class="flex-1 flex overflow-hidden bg-slate-100/70 p-2.5 gap-2.5">
+    <div class="workspace-canvas flex-1 flex overflow-hidden p-3 gap-3">
 
       <!-- Left Sidebar: Assignments Backlog & Busy Blocks -->
-      <aside class="w-80 lg:w-96 border border-[var(--border)] bg-[var(--card)] rounded-xl shadow-sm flex flex-col shrink-0 overflow-hidden">
+      <aside class="sf-card w-80 lg:w-96 flex flex-col shrink-0 overflow-hidden">
         
         <!-- Sidebar Tabs -->
         <div class="grid grid-cols-2 border-b border-[var(--border)] text-xs font-semibold shrink-0">
@@ -682,10 +706,10 @@
       </aside>
 
       <!-- Right Area: Progress & Focus Card + Untouched Calendar -->
-      <main class="flex-1 flex flex-col overflow-hidden gap-2.5">
+      <main class="flex-1 flex flex-col overflow-hidden gap-3">
 
         <!-- Consolidated Progress & Focus Card -->
-        <div class="px-4 py-2.5 bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-sm flex flex-col gap-2 text-xs shrink-0">
+        <div class="sf-card px-4 py-2.5 flex flex-col gap-2 text-xs shrink-0">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-2.5 flex-wrap min-w-0 flex-1">
               <button onclick="openProgressModal()" class="flex items-center gap-2.5 px-3 py-1 rounded-lg border border-[var(--border)] bg-[var(--background)] hover:border-[var(--primary)] transition-colors shrink-0" title="Click to open full Parent &amp; Student Live Progress Dashboard">
@@ -730,7 +754,7 @@
         </div>
 
         <!-- Original Calendar Card (Untouched) -->
-        <div class="flex-1 flex flex-col overflow-hidden bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-sm">
+        <div class="sf-card flex-1 flex flex-col overflow-hidden">
           <!-- Day Column Headers (Hidden in Daily Rows mode, shown when needed) -->
           <div id="calendarHeaderRow" class="hidden border-b border-[var(--border)] bg-[var(--card)] shrink-0 pr-[6px]"></div>
 
