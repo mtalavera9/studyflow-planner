@@ -642,9 +642,14 @@
             <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500"></span>Assignment</span>
             <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2 rounded-sm border border-dashed border-slate-400 bg-slate-800"></span>Busy/Plan</span>
           </div>
-          <button onclick="resetDemoData()" class="hover:text-[var(--foreground)] underline cursor-pointer">
-            Reset Demo
-          </button>
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="clearAllData()" class="hover:text-red-500 underline cursor-pointer">
+              Clear All
+            </button>
+            <button onclick="resetDemoData()" class="hover:text-[var(--foreground)] underline cursor-pointer">
+              Reset Demo
+            </button>
+          </div>
         </div>
       </aside>
 
@@ -2748,12 +2753,30 @@
       ];
     }
 
-    function resetDemoData() {
-      state = getInitialDemoState();
-      logActivity('Reset schedule to demo data');
+    function clearAllData() {
+      if (!confirm('Clear all assignments, personal plan blocks, and history? This will sync across your family room.')) return;
+      state.assignments = [];
+      state.busyBlocks = [];
+      state.daySnapshots = {};
+      state.history = [];
+      state.activityLog = [];
+      state.activeTaskId = null;
       saveState();
       renderAll();
-      setBanner('✨ Demo data restored! Click <strong>✨ Suggest From Now</strong> to replan starting from today and accounting for deadlines.');
+      setBanner('🧹 All assignments, personal blocks, and history cleared.');
+    }
+
+    function resetDemoData() {
+      if (!confirm('Reset to sample demo schedule? Saved in this browser only (demo data will not be pushed to the cloud).')) return;
+      state = getInitialDemoState();
+      state.updatedAt = 0;
+      logActivity('Reset schedule to demo data');
+      try {
+        localStorage.setItem(STORAGE_KEY + '_' + currentRoomId, JSON.stringify(state));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {}
+      renderAll();
+      setBanner('✨ Demo data restored locally! Click <strong>✨ Suggest From Now</strong> to replan starting from today and accounting for deadlines.');
     }
 
     function setBanner(htmlText) {
