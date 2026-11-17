@@ -326,105 +326,127 @@
   <div id="appChrome" class="flex-1 flex flex-col overflow-hidden">
 
     <!-- Top Navigation & Action Bar -->
-    <header class="bg-[var(--card)] border-b border-[var(--border)] px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
+    <header class="bg-[var(--card)] border-b border-[var(--border)] px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0 shadow-xs z-20">
       <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] flex items-center justify-center font-bold text-sm shadow-sm">
+        <div class="w-9 h-9 rounded-xl bg-[var(--primary)] text-[var(--primary-foreground)] flex items-center justify-center font-bold text-sm shadow-sm">
           SF
         </div>
         <div>
-          <div class="flex items-center gap-2 flex-wrap">
+          <div class="flex items-center gap-2.5 flex-wrap">
             <h1 class="text-sm font-bold tracking-tight text-[var(--foreground)]">StudyFlow Planner</h1>
-            <span class="text-xs px-2 py-0.5 rounded-full bg-[var(--secondary)] text-[var(--secondary-foreground)] font-medium">
-              XS = 15m · S = 30m · L = 1h · XL = 2h
-            </span>
-            <button onclick="openNowModal()" class="text-xs px-2 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-600 font-medium flex items-center gap-1 hover:bg-emerald-500/20 transition-colors" title="Click to adjust simulated 'Now' time or sync to live clock">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span id="liveNowBadge">Now: Mon, Nov 16 · 10:13 PM (After hrs)</span>
-            </button>
             <!-- Who is viewing / acting switcher (Son vs Parent) -->
             <div class="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--background)] p-0.5 text-xs" title="Switch active role (actions &amp; progress updates are tagged with this role)">
-              <button id="actorSonBtn" onclick="setActorRole('Son')" class="px-2 py-0.5 rounded-full font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] transition-colors">
+              <button id="actorSonBtn" onclick="setActorRole('Son')" class="px-2.5 py-0.5 rounded-full font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] transition-colors">
                 👦 Son
               </button>
-              <button id="actorParentBtn" onclick="setActorRole('Parent')" class="px-2 py-0.5 rounded-full font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">
+              <button id="actorParentBtn" onclick="setActorRole('Parent')" class="px-2.5 py-0.5 rounded-full font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">
                 👨‍👩‍👦 Parent
               </button>
             </div>
+            <button onclick="openNowModal()" class="text-[11px] px-2 py-0.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 font-medium flex items-center gap-1.5 hover:bg-emerald-500/20 transition-colors" title="Click to adjust simulated 'Now' time or sync to live clock">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span id="liveNowBadge">Now: Mon, Nov 16 · 10:13 PM (After hrs)</span>
+            </button>
           </div>
-          <p class="text-xs text-[var(--muted-foreground)]" id="hoursSummaryText">Weekdays: 7 PM–10 PM · Weekends: 10 AM–10 PM</p>
+          <p class="text-[11px] text-[var(--muted-foreground)] mt-0.5" id="hoursSummaryText">Weekdays: 7 PM–10 PM · Weekends: 10 AM–10 PM</p>
         </div>
       </div>
 
-      <!-- Center View & Strategy Controls -->
-      <div class="flex items-center gap-2 flex-wrap">
-        <!-- View Switcher -->
-        <div class="inline-flex rounded-lg border border-[var(--border)] bg-[var(--background)] p-0.5 text-xs">
-          <button id="viewRollingBtn" onclick="setViewMode('rolling')" class="px-2.5 py-1 rounded-md font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] transition-colors" title="7 days starting from Today">
-            From Today (7d)
-          </button>
-          <button id="viewWeekendBtn" onclick="setViewMode('weekend')" class="px-2.5 py-1 rounded-md font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">
-            Weekend
-          </button>
-          <button id="viewWeekdayBtn" onclick="setViewMode('weekdays')" class="px-2.5 py-1 rounded-md font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">
-            Weekdays
-          </button>
-          <button id="viewWeekBtn" onclick="setViewMode('week')" class="px-2.5 py-1 rounded-md font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">
-            Mon–Sun
-          </button>
-        </div>
+      <!-- Center View Switcher -->
+      <div class="inline-flex rounded-xl border border-[var(--border)] bg-[var(--background)] p-0.5 text-xs shadow-2xs">
+        <button id="viewRollingBtn" onclick="setViewMode('rolling')" class="px-2.5 py-1 rounded-lg font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] transition-colors" title="7 days starting from Today">
+          From Today (7d)
+        </button>
+        <button id="viewWeekendBtn" onclick="setViewMode('weekend')" class="px-2.5 py-1 rounded-lg font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">
+          Weekend
+        </button>
+        <button id="viewWeekdayBtn" onclick="setViewMode('weekdays')" class="px-2.5 py-1 rounded-lg font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">
+          Weekdays
+        </button>
+        <button id="viewWeekBtn" onclick="setViewMode('week')" class="px-2.5 py-1 rounded-lg font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">
+          Mon–Sun
+        </button>
+      </div>
 
-        <!-- Working Hours Modal Button -->
-        <button onclick="openHoursModal()" class="px-2.5 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--secondary)] text-xs font-medium flex items-center gap-1.5 transition-colors" title="Configure working hours">
-          <span>⏰</span>
-          <span>Hours</span>
+      <!-- Right Primary Actions + Consolidated Settings -->
+      <div class="flex items-center gap-2">
+        <button onclick="suggestSchedule()" class="px-3.5 py-1.5 rounded-xl bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-opacity" title="Replan unpinned assignments starting from Today &amp; current time, respecting deadlines">
+          <span>✨</span>
+          <span>Suggest From Now</span>
         </button>
 
-        <!-- Auto-Scheduler Strategy & Trigger -->
-        <div class="flex items-center rounded-lg border border-[var(--border)] bg-[var(--background)] p-0.5 gap-1">
-          <select id="scheduleStrategy" class="bg-transparent text-xs px-2 py-1 text-[var(--foreground)] focus:outline-none cursor-pointer" title="Suggestion strategy (Deadlines are always respected first)">
-            <option value="priority" class="bg-[var(--card)] text-[var(--foreground)]">Strategy: Deadlines &amp; Priority First</option>
-            <option value="balanced" class="bg-[var(--card)] text-[var(--foreground)]">Strategy: Spread Evenly (Before Due)</option>
-            <option value="earliest" class="bg-[var(--card)] text-[var(--foreground)]">Strategy: Pack Earliest From Now</option>
-          </select>
-          <button onclick="suggestSchedule()" class="px-3 py-1 rounded-md bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-opacity" title="Replan unpinned assignments starting from Today &amp; current time, respecting deadlines">
-            <span>✨</span>
-            <span>Suggest From Now</span>
-          </button>
-        </div>
-
-        <button onclick="clearUnpinnedSuggestions()" class="px-2.5 py-1.5 rounded-lg border border-[var(--border)] hover:bg-[var(--secondary)] text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors" title="Return unpinned suggested items back to the backlog">
-          Clear
-        </button>
-
-        <!-- Live Progress & Family Sync Button -->
-        <button onclick="openProgressModal()" class="px-2.5 py-1.5 rounded-lg border border-blue-500/40 bg-blue-500/10 hover:bg-blue-500/20 text-blue-700 text-xs font-semibold flex items-center gap-1.5 transition-colors" title="Watch live assignment completion progress, activity log, and family sync status">
+        <button onclick="openProgressModal()" class="px-2.5 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 text-xs font-semibold flex items-center gap-1.5 transition-colors" title="Watch live assignment completion progress, activity log, and family sync status">
           <span id="syncStatusDot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          <span>📊 Progress:</span>
+          <span>Progress</span>
           <span id="headerProgressBadge" class="font-mono font-bold">0/9 (0%)</span>
         </button>
-        <button onclick="openHistoryModal()" class="px-2.5 py-1.5 rounded-lg border border-violet-500/40 bg-violet-500/10 hover:bg-violet-500/20 text-violet-700 text-xs font-semibold flex items-center gap-1.5 transition-colors" title="Permanent log of every completed assignment by date">
-          <span>📜</span><span>History</span>
-        </button>
 
-        <!-- Google Auth & Family Access Button -->
-        <button id="headerAuthBtn" onclick="openAuthSettingsModal()" class="px-2.5 py-1.5 rounded-lg border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 text-xs font-semibold flex items-center gap-1.5 transition-colors" title="Configure Google Auth sign-in, allowed family Gmail addresses, and lock settings">
-          <span>🔒</span>
-          <span id="headerAuthBtnLabel">Set Up Vault</span>
-        </button>
+        <!-- Consolidated Settings & Tools Dropdown -->
+        <div class="relative" id="settingsMenuContainer">
+          <button id="settingsMenuBtn" onclick="toggleSettingsMenu(event)" class="px-3 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--secondary)] text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs" title="Configure hours, strategy, history, vault, and export">
+            <span>⚙️</span>
+            <span>Settings</span>
+            <span class="text-[10px] opacity-60">▾</span>
+          </button>
 
-        <!-- Print & Export Button -->
-        <button onclick="openExportModal()" class="px-2.5 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--secondary)] text-xs font-semibold flex items-center gap-1.5 transition-colors" title="Print schedule or export to Calendar / CSV / Text">
-          <span>🖨️</span>
-          <span>Print / Export</span>
-        </button>
+          <div id="settingsMenuDropdown" class="hidden absolute right-0 mt-2 w-72 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-xl p-3 space-y-2.5 z-50 text-xs">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[var(--muted-foreground)] px-1">Planner Settings</div>
+
+            <div class="space-y-1.5 bg-[var(--background)] p-2 rounded-lg border border-[var(--border)]">
+              <label class="block text-[11px] font-medium text-[var(--muted-foreground)]">Auto-Plan Strategy</label>
+              <select id="scheduleStrategy" class="w-full bg-[var(--card)] border border-[var(--border)] rounded-md text-xs px-2 py-1.5 text-[var(--foreground)] focus:outline-none cursor-pointer">
+                <option value="priority">Deadlines &amp; Priority First</option>
+                <option value="balanced">Spread Evenly (Before Due)</option>
+                <option value="earliest">Pack Earliest From Now</option>
+              </select>
+            </div>
+
+            <div class="space-y-1.5 px-1">
+              <label class="flex items-center justify-between cursor-pointer text-[var(--foreground)]">
+                <span>Full 7am–12am Rows</span>
+                <input type="checkbox" id="showOffHoursToggle" class="accent-[var(--primary)] rounded" checked="" onchange="toggleShowOffHours(this.checked)">
+              </label>
+              <label class="flex items-center justify-between cursor-pointer text-[var(--foreground)]">
+                <span>Split XL (2h) if needed</span>
+                <input type="checkbox" id="allowSplitXL" class="accent-[var(--primary)] rounded" onchange="saveState()">
+              </label>
+            </div>
+
+            <div class="border-t border-[var(--border)] pt-2 space-y-1">
+              <button onclick="closeSettingsMenu(); openHoursModal()" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-[var(--secondary)] flex items-center justify-between">
+                <span>⏰ Working Hours</span>
+                <span class="text-[10px] text-[var(--muted-foreground)]">Edit</span>
+              </button>
+              <button onclick="closeSettingsMenu(); openNowModal()" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-[var(--secondary)] flex items-center justify-between">
+                <span>🕒 Simulated "Now" Time</span>
+                <span class="text-[10px] text-[var(--muted-foreground)]">Adjust</span>
+              </button>
+              <button onclick="closeSettingsMenu(); clearUnpinnedSuggestions()" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-[var(--secondary)] flex items-center justify-between text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
+                <span>🧹 Clear Unpinned Suggestions</span>
+              </button>
+            </div>
+
+            <div class="border-t border-[var(--border)] pt-2 space-y-1">
+              <button onclick="closeSettingsMenu(); openHistoryModal()" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-[var(--secondary)] flex items-center gap-2">
+                <span>📜</span><span>Completed History</span>
+              </button>
+              <button id="headerAuthBtn" onclick="closeSettingsMenu(); openAuthSettingsModal()" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-[var(--secondary)] flex items-center gap-2 text-amber-800 font-medium">
+                <span>🔒</span><span id="headerAuthBtnLabel">Set Up Vault</span>
+              </button>
+              <button onclick="closeSettingsMenu(); openExportModal()" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-[var(--secondary)] flex items-center gap-2">
+                <span>🖨️</span><span>Print / Export</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
 
     <!-- Main Workspace: Left Sidebar + Right Calendar Grid -->
-    <div class="flex-1 flex overflow-hidden">
+    <div class="flex-1 flex overflow-hidden bg-slate-100/70 p-2.5 gap-2.5">
 
       <!-- Left Sidebar: Assignments Backlog & Busy Blocks -->
-      <aside class="w-80 lg:w-96 border-r border-[var(--border)] bg-[var(--card)] flex flex-col shrink-0 overflow-hidden">
+      <aside class="w-80 lg:w-96 border border-[var(--border)] bg-[var(--card)] rounded-xl shadow-sm flex flex-col shrink-0 overflow-hidden">
         
         <!-- Sidebar Tabs -->
         <div class="grid grid-cols-2 border-b border-[var(--border)] text-xs font-semibold shrink-0">
@@ -441,62 +463,68 @@
         <!-- TAB 1: ASSIGNMENTS PANEL -->
         <div id="panelAssignments" class="flex-1 flex flex-col overflow-hidden">
           
-          <!-- Add Assignment Form -->
-          <div class="p-3 border-b border-[var(--border)] bg-[var(--background)] space-y-2 shrink-0">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">New Assignment</span>
-              <button type="button" onclick="toggleBulkPasteBox()" id="topBulkPasteToggleBtn" class="text-xs px-2 py-0.5 rounded border border-blue-500/40 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 font-semibold flex items-center gap-1 transition-colors" title="Paste a multi-line list of assignments from a doc or notes">
-                <span>📋</span>
-                <span>Paste List from Doc</span>
-              </button>
-            </div>
-            
-            <input id="newTaskTitle" type="text" placeholder="Type 1 task or paste a multi-line list here..." class="w-full px-2.5 py-1.5 rounded-md border border-[var(--border)] bg-[var(--card)] text-xs text-[var(--foreground)] placeholder-[var(--placeholder)] focus:outline-none focus:border-[var(--primary)]" onkeydown="if(event.key==='Enter') addAssignment()" onpaste="handleTitleInputPaste(event)">
-
-            <div class="grid grid-cols-4 gap-1.5">
-              <button type="button" id="sizeBtn-XS" onclick="selectTaskSize('XS')" class="size-selector-btn py-1.5 px-1.5 rounded-md border border-[var(--border)] bg-[var(--card)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-xs font-medium flex flex-col items-center transition-all">
-                <span class="font-bold">X-Small (XS)</span>
-                <span class="text-xs opacity-75">15 min</span>
-              </button>
-              <button type="button" id="sizeBtn-S" onclick="selectTaskSize('S')" class="size-selector-btn py-1.5 px-1.5 rounded-md border border-[var(--border)] bg-[var(--card)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-xs font-medium flex flex-col items-center transition-all">
-                <span class="font-bold">Small (S)</span>
-                <span class="text-xs opacity-75">30 min</span>
-              </button>
-              <button type="button" id="sizeBtn-L" onclick="selectTaskSize('L')" class="size-selector-btn py-1.5 px-1.5 rounded-md border-2 border-[var(--primary)] bg-[var(--secondary)] text-[var(--foreground)] text-xs font-medium flex flex-col items-center transition-all">
-                <span class="font-bold">Large (L)</span>
-                <span class="text-xs opacity-75">1 hour</span>
-              </button>
-              <button type="button" id="sizeBtn-XL" onclick="selectTaskSize('XL')" class="size-selector-btn py-1.5 px-1.5 rounded-md border border-[var(--border)] bg-[var(--card)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-xs font-medium flex flex-col items-center transition-all">
-                <span class="font-bold">X-Large (XL)</span>
-                <span class="text-xs opacity-75">2 hours</span>
-              </button>
-            </div>
-
-            <!-- Subject & Priority Row -->
-            <div class="grid grid-cols-2 gap-1.5">
-              <div class="flex gap-1 min-w-0"><select id="newTaskSubject" class="flex-1 min-w-0 px-2 py-1.5 rounded-md border border-[var(--border)] bg-[var(--card)] text-xs text-[var(--foreground)] focus:outline-none">
-                <option value="Math">📐 Math</option>
-                <option value="English">📖 English</option>
-                <option value="Science">🧪 Science</option>
-                <option value="History">🏛️ History</option>
-                <option value="Language">🌎 World Lang</option>
-                <option value="CS/Elective">💻 CS / Elective</option>
-                <option value="Prep">🎯 Test Prep</option>
-              </select><button type="button" onclick="addCustomSubject('newTaskSubject')" title="Add a new subject" class="px-2 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--secondary)] text-xs font-bold text-[var(--foreground)] shrink-0">➕</button></div>
-              <select id="newTaskPriority" class="px-2 py-1.5 rounded-md border border-[var(--border)] bg-[var(--card)] text-xs text-[var(--foreground)] focus:outline-none">
-                <option value="high">🔥 High Priority</option>
-                <option value="normal" selected="">⚡ Normal</option>
-                <option value="low">🌱 Flexible</option>
-              </select>
-            </div>
-
-            <!-- Optional Deadline Row + Add Button -->
+          <!-- Add Assignment Form (Compact) -->
+          <div class="p-3 border-b border-[var(--border)] bg-[var(--background)]/60 space-y-2 shrink-0">
             <div class="flex items-center gap-1.5">
-              <select id="newTaskDueDay" onchange="toggleNewDueTimeSelect()" class="flex-1 px-2 py-1.5 rounded-md border border-[var(--border)] bg-[var(--card)] text-xs text-[var(--foreground)] focus:outline-none" title="Optional deadline day"><option value="" class="bg-[var(--card)] text-[var(--foreground)]">⏳ No Deadline (Optional)</option><option value="Mon" class="bg-[var(--card)] text-[var(--foreground)]">Due: Mon, Nov 16 (Today)</option><option value="Tue" class="bg-[var(--card)] text-[var(--foreground)]">Due: Tue, Nov 17</option><option value="Wed" class="bg-[var(--card)] text-[var(--foreground)]">Due: Wed, Nov 18</option><option value="Thu" class="bg-[var(--card)] text-[var(--foreground)]">Due: Thu, Nov 19</option><option value="Fri" class="bg-[var(--card)] text-[var(--foreground)]">Due: Fri, Nov 20</option><option value="Sat" class="bg-[var(--card)] text-[var(--foreground)]">Due: Sat, Nov 21</option><option value="Sun" class="bg-[var(--card)] text-[var(--foreground)]">Due: Sun, Nov 22</option></select>
-              <select id="newTaskDueTime" class="hidden px-2 py-1.5 rounded-md border border-[var(--border)] bg-[var(--card)] text-xs text-[var(--foreground)] focus:outline-none" title="Deadline time"><option value="420" class="bg-[var(--card)] text-[var(--foreground)]">7 AM</option><option value="450" class="bg-[var(--card)] text-[var(--foreground)]">7:30 AM</option><option value="480" class="bg-[var(--card)] text-[var(--foreground)]">8 AM</option><option value="510" class="bg-[var(--card)] text-[var(--foreground)]">8:30 AM</option><option value="540" class="bg-[var(--card)] text-[var(--foreground)]">9 AM</option><option value="570" class="bg-[var(--card)] text-[var(--foreground)]">9:30 AM</option><option value="600" class="bg-[var(--card)] text-[var(--foreground)]">10 AM</option><option value="630" class="bg-[var(--card)] text-[var(--foreground)]">10:30 AM</option><option value="660" class="bg-[var(--card)] text-[var(--foreground)]">11 AM</option><option value="690" class="bg-[var(--card)] text-[var(--foreground)]">11:30 AM</option><option value="720" class="bg-[var(--card)] text-[var(--foreground)]">12 PM</option><option value="750" class="bg-[var(--card)] text-[var(--foreground)]">12:30 PM</option><option value="780" class="bg-[var(--card)] text-[var(--foreground)]">1 PM</option><option value="810" class="bg-[var(--card)] text-[var(--foreground)]">1:30 PM</option><option value="840" class="bg-[var(--card)] text-[var(--foreground)]">2 PM</option><option value="870" class="bg-[var(--card)] text-[var(--foreground)]">2:30 PM</option><option value="900" class="bg-[var(--card)] text-[var(--foreground)]">3 PM</option><option value="930" class="bg-[var(--card)] text-[var(--foreground)]">3:30 PM</option><option value="960" class="bg-[var(--card)] text-[var(--foreground)]">4 PM</option><option value="990" class="bg-[var(--card)] text-[var(--foreground)]">4:30 PM</option><option value="1020" class="bg-[var(--card)] text-[var(--foreground)]">5 PM</option><option value="1050" class="bg-[var(--card)] text-[var(--foreground)]">5:30 PM</option><option value="1080" class="bg-[var(--card)] text-[var(--foreground)]">6 PM</option><option value="1110" class="bg-[var(--card)] text-[var(--foreground)]">6:30 PM</option><option value="1140" class="bg-[var(--card)] text-[var(--foreground)]">7 PM</option><option value="1170" class="bg-[var(--card)] text-[var(--foreground)]">7:30 PM</option><option value="1200" class="bg-[var(--card)] text-[var(--foreground)]">8 PM</option><option value="1230" class="bg-[var(--card)] text-[var(--foreground)]">8:30 PM</option><option value="1260" class="bg-[var(--card)] text-[var(--foreground)]">9 PM</option><option value="1290" class="bg-[var(--card)] text-[var(--foreground)]">9:30 PM</option><option value="1320" class="bg-[var(--card)] text-[var(--foreground)]">10 PM</option><option value="1350" class="bg-[var(--card)] text-[var(--foreground)]">10:30 PM</option><option value="1380" class="bg-[var(--card)] text-[var(--foreground)]">11 PM</option><option value="1410" class="bg-[var(--card)] text-[var(--foreground)]">11:30 PM</option><option value="1440" class="bg-[var(--card)] text-[var(--foreground)]">12 AM</option></select>
-              <button onclick="addAssignment()" class="px-3 py-1.5 rounded-md bg-[var(--primary)] text-[var(--primary-foreground)] text-xs font-semibold hover:opacity-90 shrink-0">
+              <input id="newTaskTitle" type="text" placeholder="Add assignment or paste a list..." class="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] text-xs text-[var(--foreground)] placeholder-[var(--placeholder)] focus:outline-none focus:border-[var(--primary)] shadow-2xs" onkeydown="if(event.key==='Enter') addAssignment()" onpaste="handleTitleInputPaste(event)">
+              <button onclick="addAssignment()" class="px-3 py-1.5 rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] text-xs font-semibold hover:opacity-90 shrink-0 shadow-xs">
                 + Add
               </button>
+            </div>
+
+            <!-- Slim 1-line Size Pill Strip -->
+            <div class="grid grid-cols-4 gap-1.5">
+              <button type="button" id="sizeBtn-XS" onclick="selectTaskSize('XS')" class="size-selector-btn py-1 px-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-[11px] font-medium flex items-center justify-center gap-1 transition-all">
+                <span class="font-bold">XS</span><span class="opacity-75">15m</span>
+              </button>
+              <button type="button" id="sizeBtn-S" onclick="selectTaskSize('S')" class="size-selector-btn py-1 px-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-[11px] font-medium flex items-center justify-center gap-1 transition-all">
+                <span class="font-bold">S</span><span class="opacity-75">30m</span>
+              </button>
+              <button type="button" id="sizeBtn-L" onclick="selectTaskSize('L')" class="size-selector-btn py-1 px-1.5 rounded-lg border-2 border-[var(--primary)] bg-[var(--secondary)] text-[var(--foreground)] text-[11px] font-medium flex items-center justify-center gap-1 transition-all">
+                <span class="font-bold">L</span><span class="opacity-75">1h</span>
+              </button>
+              <button type="button" id="sizeBtn-XL" onclick="selectTaskSize('XL')" class="size-selector-btn py-1 px-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-[11px] font-medium flex items-center justify-center gap-1 transition-all">
+                <span class="font-bold">XL</span><span class="opacity-75">2h</span>
+              </button>
+            </div>
+
+            <!-- Collapsible More Options Toggle -->
+            <div class="flex items-center justify-between pt-0.5">
+              <button type="button" onclick="toggleMoreAssignmentOptions()" id="moreOptionsToggleBtn" class="text-[11px] font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] flex items-center gap-1 transition-colors">
+                <span id="moreOptionsChevron">▸</span>
+                <span>More options (Subject, Priority, Due)</span>
+              </button>
+              <button type="button" onclick="toggleBulkPasteBox()" id="topBulkPasteToggleBtn" class="text-[11px] px-2 py-0.5 rounded-md border border-blue-500/30 bg-blue-500/10 text-blue-700 hover:bg-blue-500/20 font-semibold flex items-center gap-1 transition-colors" title="Paste a multi-line list of assignments from a doc or notes">
+                <span>📋</span>
+                <span>Paste List</span>
+              </button>
+            </div>
+
+            <!-- Collapsible Drawer: Subject, Priority, Deadline -->
+            <div id="assignmentMoreOptions" class="hidden space-y-1.5 pt-1">
+              <div class="grid grid-cols-2 gap-1.5">
+                <div class="flex gap-1 min-w-0">
+                  <select id="newTaskSubject" class="flex-1 min-w-0 px-2 py-1.5 rounded-md border border-[var(--border)] bg-[var(--card)] text-xs text-[var(--foreground)] focus:outline-none">
+                    <option value="Math">📐 Math</option>
+                    <option value="English">📖 English</option>
+                    <option value="Science">🧪 Science</option>
+                    <option value="History">🏛️ History</option>
+                    <option value="Language">🌎 World Lang</option>
+                    <option value="CS/Elective">💻 CS / Elective</option>
+                    <option value="Prep">🎯 Test Prep</option>
+                  </select>
+                  <button type="button" onclick="addCustomSubject('newTaskSubject')" title="Add a new subject" class="px-2 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--secondary)] text-xs font-bold text-[var(--foreground)] shrink-0">➕</button>
+                </div>
+                <select id="newTaskPriority" class="px-2 py-1.5 rounded-md border border-[var(--border)] bg-[var(--card)] text-xs text-[var(--foreground)] focus:outline-none">
+                  <option value="high">🔥 High Priority</option>
+                  <option value="normal" selected="">⚡ Normal</option>
+                  <option value="low">🌱 Flexible</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <select id="newTaskDueDay" onchange="toggleNewDueTimeSelect()" class="flex-1 px-2 py-1.5 rounded-md border border-[var(--border)] bg-[var(--card)] text-xs text-[var(--foreground)] focus:outline-none" title="Optional deadline day"><option value="" class="bg-[var(--card)] text-[var(--foreground)]">⏳ No Deadline (Optional)</option><option value="Mon" class="bg-[var(--card)] text-[var(--foreground)]">Due: Mon, Nov 16 (Today)</option><option value="Tue" class="bg-[var(--card)] text-[var(--foreground)]">Due: Tue, Nov 17</option><option value="Wed" class="bg-[var(--card)] text-[var(--foreground)]">Due: Wed, Nov 18</option><option value="Thu" class="bg-[var(--card)] text-[var(--foreground)]">Due: Thu, Nov 19</option><option value="Fri" class="bg-[var(--card)] text-[var(--foreground)]">Due: Fri, Nov 20</option><option value="Sat" class="bg-[var(--card)] text-[var(--foreground)]">Due: Sat, Nov 21</option><option value="Sun" class="bg-[var(--card)] text-[var(--foreground)]">Due: Sun, Nov 22</option></select>
+                <select id="newTaskDueTime" class="hidden px-2 py-1.5 rounded-md border border-[var(--border)] bg-[var(--card)] text-xs text-[var(--foreground)] focus:outline-none" title="Deadline time"><option value="420" class="bg-[var(--card)] text-[var(--foreground)]">7 AM</option><option value="450" class="bg-[var(--card)] text-[var(--foreground)]">7:30 AM</option><option value="480" class="bg-[var(--card)] text-[var(--foreground)]">8 AM</option><option value="510" class="bg-[var(--card)] text-[var(--foreground)]">8:30 AM</option><option value="540" class="bg-[var(--card)] text-[var(--foreground)]">9 AM</option><option value="570" class="bg-[var(--card)] text-[var(--foreground)]">9:30 AM</option><option value="600" class="bg-[var(--card)] text-[var(--foreground)]">10 AM</option><option value="630" class="bg-[var(--card)] text-[var(--foreground)]">10:30 AM</option><option value="660" class="bg-[var(--card)] text-[var(--foreground)]">11 AM</option><option value="690" class="bg-[var(--card)] text-[var(--foreground)]">11:30 AM</option><option value="720" class="bg-[var(--card)] text-[var(--foreground)]">12 PM</option><option value="750" class="bg-[var(--card)] text-[var(--foreground)]">12:30 PM</option><option value="780" class="bg-[var(--card)] text-[var(--foreground)]">1 PM</option><option value="810" class="bg-[var(--card)] text-[var(--foreground)]">1:30 PM</option><option value="840" class="bg-[var(--card)] text-[var(--foreground)]">2 PM</option><option value="870" class="bg-[var(--card)] text-[var(--foreground)]">2:30 PM</option><option value="900" class="bg-[var(--card)] text-[var(--foreground)]">3 PM</option><option value="930" class="bg-[var(--card)] text-[var(--foreground)]">3:30 PM</option><option value="960" class="bg-[var(--card)] text-[var(--foreground)]">4 PM</option><option value="990" class="bg-[var(--card)] text-[var(--foreground)]">4:30 PM</option><option value="1020" class="bg-[var(--card)] text-[var(--foreground)]">5 PM</option><option value="1050" class="bg-[var(--card)] text-[var(--foreground)]">5:30 PM</option><option value="1080" class="bg-[var(--card)] text-[var(--foreground)]">6 PM</option><option value="1110" class="bg-[var(--card)] text-[var(--foreground)]">6:30 PM</option><option value="1140" class="bg-[var(--card)] text-[var(--foreground)]">7 PM</option><option value="1170" class="bg-[var(--card)] text-[var(--foreground)]">7:30 PM</option><option value="1200" class="bg-[var(--card)] text-[var(--foreground)]">8 PM</option><option value="1230" class="bg-[var(--card)] text-[var(--foreground)]">8:30 PM</option><option value="1260" class="bg-[var(--card)] text-[var(--foreground)]">9 PM</option><option value="1290" class="bg-[var(--card)] text-[var(--foreground)]">9:30 PM</option><option value="1320" class="bg-[var(--card)] text-[var(--foreground)]">10 PM</option><option value="1350" class="bg-[var(--card)] text-[var(--foreground)]">10:30 PM</option><option value="1380" class="bg-[var(--card)] text-[var(--foreground)]">11 PM</option><option value="1410" class="bg-[var(--card)] text-[var(--foreground)]">11:30 PM</option><option value="1440" class="bg-[var(--card)] text-[var(--foreground)]">12 AM</option></select>
+              </div>
             </div>
           </div>
 
@@ -653,72 +681,63 @@
         </div>
       </aside>
 
-      <!-- Right Area: Interactive Time-Block Schedule Grid -->
-      <main class="flex-1 flex flex-col overflow-hidden bg-[var(--background)]">
+      <!-- Right Area: Progress & Focus Card + Untouched Calendar -->
+      <main class="flex-1 flex flex-col overflow-hidden gap-2.5">
 
-        <!-- Live Family Progress & Active Focus Bar -->
-        <div class="px-4 py-2 bg-[var(--background)] border-b border-[var(--border)] flex flex-wrap items-center justify-between gap-3 text-xs shrink-0">
-          <div class="flex items-center gap-3 flex-wrap min-w-0 flex-1">
-            <button onclick="openProgressModal()" class="flex items-center gap-2 px-2.5 py-1 rounded-md border border-[var(--border)] bg-[var(--card)] hover:border-[var(--primary)] transition-colors shrink-0" title="Click to open full Parent &amp; Student Live Progress Dashboard">
-              <span class="font-semibold text-[var(--foreground)]" id="overallProgressText">0 / 9 Done (0%)</span>
-              <div class="w-24 h-2 rounded-full bg-[var(--secondary)] overflow-hidden">
-                <div id="overallProgressPctBar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div>
+        <!-- Consolidated Progress & Focus Card -->
+        <div class="px-4 py-2.5 bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-sm flex flex-col gap-2 text-xs shrink-0">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5 flex-wrap min-w-0 flex-1">
+              <button onclick="openProgressModal()" class="flex items-center gap-2.5 px-3 py-1 rounded-lg border border-[var(--border)] bg-[var(--background)] hover:border-[var(--primary)] transition-colors shrink-0" title="Click to open full Parent &amp; Student Live Progress Dashboard">
+                <span class="font-bold text-[var(--foreground)]" id="overallProgressText">0 / 9 Done (0%)</span>
+                <div class="w-28 h-2 rounded-full bg-[var(--secondary)] overflow-hidden">
+                  <div id="overallProgressPctBar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <span class="text-[var(--muted-foreground)] font-mono" id="overallHoursProgressText">0m / 8.5h completed</span>
+              </button>
+
+              <span id="todayProgressPill" class="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 font-semibold shrink-0">Today (Mon): 0/3 done</span>
+
+              <div id="activeFocusContainer" class="flex items-center gap-1.5 min-w-0 truncate"></div>
+            </div>
+
+            <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
+              <!-- Layout Style Toggle: Daily Rows vs Weekly Grid -->
+              <div class="inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--background)] p-0.5 text-[11px]">
+                <button type="button" id="layoutDailyRowsBtn" onclick="setCalendarLayout('daily')" class="px-2.5 py-0.5 rounded-md font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] transition-colors" title="Clean, skinny full-width rows for each day">
+                  📋 Daily Rows
+                </button>
+                <button type="button" id="layoutWeeklyTableBtn" onclick="setCalendarLayout('weekly')" class="px-2.5 py-0.5 rounded-md font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors" title="Side-by-side weekly hour table (7:00 AM – 12:00 AM)">
+                  🗓️ Weekly Grid
+                </button>
               </div>
-              <span class="text-[var(--muted-foreground)] font-mono" id="overallHoursProgressText">0m / 8.5h completed</span>
-            </button>
 
-            <span id="todayProgressPill" class="px-2 py-1 rounded-md bg-[var(--card)] border border-[var(--border)] text-[var(--muted-foreground)] font-medium shrink-0">Today (Mon): 0/3 done</span>
-
-            <div id="activeFocusContainer" class="flex items-center gap-1.5 min-w-0 truncate"></div>
+              <span id="liveSyncStatusText" class="text-[11px] font-mono text-emerald-600 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Live Synced</span>
+              </span>
+              <button onclick="openProgressModal()" class="px-2.5 py-1 rounded-lg border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--secondary)] text-[var(--foreground)] font-medium">
+                Activity →
+              </button>
+            </div>
           </div>
 
-          <div class="flex items-center gap-2 shrink-0">
-            <span id="liveSyncStatusText" class="text-[11px] font-mono text-emerald-600 flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>Live Synced</span>
-            </span>
-            <button onclick="openProgressModal()" class="px-2 py-1 rounded border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--secondary)] text-[var(--foreground)] font-medium">
-              Activity &amp; Family Link →
-            </button>
-          </div>
-        </div>
-        
-        <!-- Status / Helper Banner & Schedule Layout Switcher -->
-        <div class="px-4 py-1.5 bg-[var(--card)] border-b border-[var(--border)] flex flex-wrap items-center justify-between gap-2 text-xs shrink-0">
-          <div class="flex items-center gap-3 min-w-0 flex-1">
-            <span id="statusBannerText" class="text-[var(--muted-foreground)] truncate">
+          <div class="flex items-center justify-between text-[11px] text-[var(--muted-foreground)] border-t border-[var(--border)]/60 pt-1.5">
+            <span id="statusBannerText" class="truncate">
               💡 <strong>Tip:</strong> Drag any assignment onto a time row, click <strong>▶️ Start</strong> when working, or check off <strong>☑️</strong> when done!
             </span>
           </div>
-          <div class="flex items-center gap-3 flex-wrap shrink-0">
-            <!-- Layout Style Toggle: Daily Rows (Default like Print/Export) vs Weekly Table -->
-            <div class="inline-flex items-center rounded-md border border-[var(--border)] bg-[var(--background)] p-0.5 text-[11px]">
-              <button type="button" id="layoutDailyRowsBtn" onclick="setCalendarLayout('daily')" class="px-2 py-0.5 rounded font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] transition-colors" title="Clean, skinny full-width rows for each day (no cut-off text, matches Print/Export view)">
-                📋 Daily Rows
-              </button>
-              <button type="button" id="layoutWeeklyTableBtn" onclick="setCalendarLayout('weekly')" class="px-2 py-0.5 rounded font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors" title="Side-by-side weekly hour table (7:00 AM – 12:00 AM)">
-                🗓️ Weekly Grid
-              </button>
-            </div>
-
-            <label class="inline-flex items-center gap-1.5 cursor-pointer text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-[11px]" title="Show all 7:00 AM – 12:00 AM off-hours rows, or collapse unscheduled off-hours so you can focus on Study Windows &amp; Scheduled items">
-              <input type="checkbox" id="showOffHoursToggle" class="accent-[var(--primary)] rounded" checked="" onchange="toggleShowOffHours(this.checked)">
-              <span>Full 7am–12am Rows</span>
-            </label>
-
-            <label class="inline-flex items-center gap-1.5 cursor-pointer text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-[11px]">
-              <input type="checkbox" id="allowSplitXL" class="accent-[var(--primary)] rounded" onchange="saveState()">
-              <span>Split XL (2h) if needed</span>
-            </label>
-          </div>
         </div>
 
-        <!-- Day Column Headers (Hidden in Daily Rows mode, shown when needed) -->
-        <div id="calendarHeaderRow" class="hidden border-b border-[var(--border)] bg-[var(--card)] shrink-0 pr-[6px]"></div>
+        <!-- Original Calendar Card (Untouched) -->
+        <div class="flex-1 flex flex-col overflow-hidden bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-sm">
+          <!-- Day Column Headers (Hidden in Daily Rows mode, shown when needed) -->
+          <div id="calendarHeaderRow" class="hidden border-b border-[var(--border)] bg-[var(--card)] shrink-0 pr-[6px]"></div>
 
-        <!-- Scrollable Schedule Container -->
-        <div id="calendarScrollContainer" class="flex-1 overflow-y-auto relative p-3 bg-[var(--background)]">
-          <div id="calendarGridRow" class="relative min-h-full space-y-4"></div>
+          <!-- Scrollable Schedule Container -->
+          <div id="calendarScrollContainer" class="flex-1 overflow-y-auto relative p-3 bg-[var(--background)]">
+            <div id="calendarGridRow" class="relative min-h-full space-y-4"></div>
+          </div>
         </div>
       </main>
     </div>
@@ -2858,15 +2877,41 @@
       }
     }
 
+    function toggleSettingsMenu(event) {
+      if (event) event.stopPropagation();
+      const dd = document.getElementById('settingsMenuDropdown');
+      if (dd) dd.classList.toggle('hidden');
+    }
+
+    function closeSettingsMenu() {
+      const dd = document.getElementById('settingsMenuDropdown');
+      if (dd) dd.classList.add('hidden');
+    }
+
+    document.addEventListener('click', (e) => {
+      const container = document.getElementById('settingsMenuContainer');
+      if (container && !container.contains(e.target)) {
+        closeSettingsMenu();
+      }
+    });
+
+    function toggleMoreAssignmentOptions() {
+      const panel = document.getElementById('assignmentMoreOptions');
+      const chev = document.getElementById('moreOptionsChevron');
+      if (!panel) return;
+      const isHidden = panel.classList.toggle('hidden');
+      if (chev) chev.textContent = isHidden ? '▸' : '▾';
+    }
+
     function selectTaskSize(sizeKey) {
       state.selectedNewSize = sizeKey;
       ['XS', 'S', 'L', 'XL'].forEach(k => {
         const btn = document.getElementById(`sizeBtn-${k}`);
         if (!btn) return;
         if (k === sizeKey) {
-          btn.className = 'size-selector-btn py-1.5 px-1.5 rounded-md border-2 border-[var(--primary)] bg-[var(--secondary)] text-[var(--foreground)] text-xs font-medium flex flex-col items-center transition-all';
+          btn.className = 'size-selector-btn py-1 px-1.5 rounded-lg border-2 border-[var(--primary)] bg-[var(--secondary)] text-[var(--foreground)] text-[11px] font-medium flex items-center justify-center gap-1 transition-all';
         } else {
-          btn.className = 'size-selector-btn py-1.5 px-1.5 rounded-md border border-[var(--border)] bg-[var(--card)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-xs font-medium flex flex-col items-center transition-all';
+          btn.className = 'size-selector-btn py-1 px-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-[11px] font-medium flex items-center justify-center gap-1 transition-all';
         }
       });
     }
