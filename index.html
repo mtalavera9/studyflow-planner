@@ -1065,6 +1065,21 @@
     </div>
   </div>
 
+  <!-- Modal: Confirm Destructive / Reset Action -->
+  <div id="confirmActionModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl max-w-sm w-full p-5 shadow-xl space-y-4">
+      <div class="flex items-center justify-between border-b border-[var(--border)] pb-2.5">
+        <h2 id="confirmModalTitle" class="text-sm font-bold text-[var(--foreground)]">Confirm Action</h2>
+        <button onclick="closeConfirmModal()" class="text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-sm font-bold px-2">✕</button>
+      </div>
+      <p id="confirmModalMessage" class="text-xs text-[var(--muted-foreground)] leading-relaxed"></p>
+      <div class="flex items-center justify-end gap-2 pt-1">
+        <button onclick="closeConfirmModal()" class="px-3 py-1.5 rounded-md border border-[var(--border)] text-xs hover:bg-[var(--secondary)]">Cancel</button>
+        <button id="confirmModalConfirmBtn" onclick="executeConfirmModal()" class="px-3.5 py-1.5 rounded-md bg-red-600 hover:bg-red-700 text-white text-xs font-semibold">Confirm</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal: Live Parent & Student Progress Dashboard + Online Sync -->
   <div id="historyModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
     <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-2xl w-full max-w-2xl max-h-[88vh] flex flex-col text-xs">
@@ -2753,30 +2768,71 @@
       ];
     }
 
+    let pendingConfirmCallback = null;
+
+    function openConfirmModal(title, message, confirmLabel, btnClass, onConfirm) {
+      pendingConfirmCallback = onConfirm;
+      document.getElementById('confirmModalTitle').textContent = title;
+      document.getElementById('confirmModalMessage').textContent = message;
+      const btn = document.getElementById('confirmModalConfirmBtn');
+      btn.textContent = confirmLabel;
+      btn.className = btnClass;
+      const modal = document.getElementById('confirmActionModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeConfirmModal() {
+      pendingConfirmCallback = null;
+      const modal = document.getElementById('confirmActionModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function executeConfirmModal() {
+      const cb = pendingConfirmCallback;
+      closeConfirmModal();
+      if (typeof cb === 'function') cb();
+    }
+
     function clearAllData() {
-      if (!confirm('Clear all assignments, personal plan blocks, and history? This will sync across your family room.')) return;
-      state.assignments = [];
-      state.busyBlocks = [];
-      state.daySnapshots = {};
-      state.history = [];
-      state.activityLog = [];
-      state.activeTaskId = null;
-      saveState();
-      renderAll();
-      setBanner('🧹 All assignments, personal blocks, and history cleared.');
+      openConfirmModal(
+        'Clear All Data?',
+        'Clear all assignments, personal plan blocks, day snapshots, history, and activity log? This will sync across your family room.',
+        'Clear All',
+        'px-3.5 py-1.5 rounded-md bg-red-600 hover:bg-red-700 text-white text-xs font-semibold',
+        () => {
+          state.assignments = [];
+          state.busyBlocks = [];
+          state.daySnapshots = {};
+          state.history = [];
+          state.activityLog = [];
+          state.activeTaskId = null;
+          saveState();
+          renderAll();
+          setBanner('🧹 All assignments, personal blocks, and history cleared.');
+        }
+      );
     }
 
     function resetDemoData() {
-      if (!confirm('Reset to sample demo schedule? Saved in this browser only (demo data will not be pushed to the cloud).')) return;
-      state = getInitialDemoState();
-      state.updatedAt = 0;
-      logActivity('Reset schedule to demo data');
-      try {
-        localStorage.setItem(STORAGE_KEY + '_' + currentRoomId, JSON.stringify(state));
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      } catch (e) {}
-      renderAll();
-      setBanner('✨ Demo data restored locally! Click <strong>✨ Suggest From Now</strong> to replan starting from today and accounting for deadlines.');
+      openConfirmModal(
+        'Reset to Demo Schedule?',
+        'Reset to the sample demo schedule? Saved in this browser only (demo data will not be pushed to the cloud).',
+        'Reset Demo',
+        'px-3.5 py-1.5 rounded-md bg-[var(--primary)] hover:opacity-90 text-[var(--primary-foreground)] text-xs font-semibold',
+        () => {
+          state = getInitialDemoState();
+          state.updatedAt = 0;
+          logActivity('Reset schedule to demo data');
+          try {
+            localStorage.setItem(STORAGE_KEY + '_' + currentRoomId, JSON.stringify(state));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          } catch (e) {}
+          renderAll();
+          setBanner('✨ Demo data restored locally! Click <strong>✨ Suggest From Now</strong> to replan starting from today and accounting for deadlines.');
+        }
+      );
     }
 
     function setBanner(htmlText) {
