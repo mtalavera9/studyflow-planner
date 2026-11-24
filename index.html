@@ -451,6 +451,10 @@
             </div>
 
             <div class="border-t border-[var(--border)] pt-2 space-y-1">
+              <button onclick="closeSettingsMenu(); openGoogleCalendarModal()" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-[var(--secondary)] flex items-center justify-between gap-2">
+                <span class="flex items-center gap-2"><span>📅</span><span>Google Calendar Import</span></span>
+                <span id="settingsGcalBadge" class="text-[10px] text-[var(--muted-foreground)] truncate max-w-[110px]">Setup</span>
+              </button>
               <button onclick="closeSettingsMenu(); openHistoryModal()" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-[var(--secondary)] flex items-center gap-2">
                 <span>📜</span><span>Completed History</span>
               </button>
@@ -561,6 +565,9 @@
                   <span>📥 Unscheduled Backlog</span>
                 </span>
                 <div class="flex items-center gap-1.5">
+                  <button type="button" onclick="openGoogleCalendarModal()" class="text-xs px-2 py-0.5 rounded border border-[var(--border)] bg-[var(--background)] hover:border-[var(--primary)] text-[var(--foreground)] font-medium flex items-center gap-1 transition-colors" title="Configure & import events from a Gmail / Google Calendar">
+                    <span>📅 GCal</span>
+                  </button>
                   <button type="button" onclick="toggleBulkPasteBox()" class="text-xs px-2 py-0.5 rounded border border-[var(--border)] bg-[var(--background)] hover:border-[var(--primary)] text-[var(--foreground)] font-medium flex items-center gap-1 transition-colors" title="Paste a list of assignments straight into the backlog">
                     <span>📋 Paste List</span>
                   </button>
@@ -1383,6 +1390,157 @@
     </div>
   </div>
 
+  <!-- Modal: Google Calendar Configuration & Import -->
+  <div id="googleCalendarModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl max-w-2xl w-full p-5 space-y-4 shadow-xl max-h-[92vh] flex flex-col overflow-hidden text-xs">
+      <div class="flex items-center justify-between border-b border-[var(--border)] pb-3 shrink-0">
+        <div>
+          <h2 class="text-sm font-bold text-[var(--foreground)] flex items-center gap-2">
+            <span>📅 Google Calendar Configuration &amp; Import</span>
+            <span id="gcalRoleBadge" class="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-700 border border-blue-500/30 text-[10px] font-semibold">Parent / Son</span>
+          </h2>
+          <p class="text-xs text-[var(--muted-foreground)] mt-0.5">Configure which Gmail calendar to use and whether imported events go to the <strong>Unscheduled Backlog</strong> or directly <strong>On Calendar</strong>. Saved &amp; synced to the database.</p>
+        </div>
+        <button onclick="closeGoogleCalendarModal()" class="text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-sm font-bold px-2">✕</button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto space-y-4 pr-1">
+        <!-- Step 1: Gmail Calendar & Destination Config -->
+        <div class="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--background)] space-y-3">
+          <div class="font-bold text-[var(--foreground)] flex items-center justify-between">
+            <span>1. Gmail Calendar &amp; Import Destination</span>
+            <span id="gcalConfigMeta" class="text-[10px] font-normal text-[var(--muted-foreground)]">Not configured yet</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="sm:col-span-2">
+              <label for="gcalEmailInput" class="block text-[11px] font-semibold text-[var(--foreground)] mb-1">Gmail Address / Google Calendar ID</label>
+              <input id="gcalEmailInput" type="text" placeholder="e.g. son.name@gmail.com or family@group.calendar.google.com" class="w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] text-xs focus:outline-none focus:border-[var(--primary)]">
+              <p class="text-[10px] text-[var(--muted-foreground)] mt-1">Either Parent or Son can set or update which Gmail calendar is used. Stored in the synced database.</p>
+            </div>
+
+            <div>
+              <label for="gcalDefaultSubject" class="block text-[11px] font-semibold text-[var(--foreground)] mb-1">Subject Tagging (for Assignments)</label>
+              <select id="gcalDefaultSubject" class="w-full px-2.5 py-2 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] text-xs focus:outline-none focus:border-[var(--primary)]">
+                <option value="auto">✨ Auto-detect from event title</option>
+                <option value="Math">Math</option>
+                <option value="Science">Science</option>
+                <option value="English">English</option>
+                <option value="History">History</option>
+                <option value="Language">Language</option>
+                <option value="CS">CS / Tech</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="gcalDaysAhead" class="block text-[11px] font-semibold text-[var(--foreground)] mb-1">Import Date Window</label>
+              <select id="gcalDaysAhead" class="w-full px-2.5 py-2 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] text-xs focus:outline-none focus:border-[var(--primary)]">
+                <option value="7">Next 7 Days (Current Rolling Week)</option>
+                <option value="14">Next 14 Days</option>
+                <option value="30">Next 30 Days</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="space-y-1.5 pt-1">
+            <div class="text-[11px] font-semibold text-[var(--foreground)]">Where should imported Google Calendar events be added?</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <label class="flex items-start gap-2 p-2.5 rounded-lg border border-[var(--border)] bg-[var(--card)] cursor-pointer hover:border-[var(--primary)]">
+                <input type="radio" name="gcalDestRadio" value="backlog" id="gcalDestBacklog" class="mt-0.5 accent-[var(--primary)]" checked>
+                <div>
+                  <div class="font-semibold text-[var(--foreground)]">📥 Unscheduled Backlog</div>
+                  <div class="text-[10px] text-[var(--muted-foreground)]">Add as unscheduled assignments to plan later.</div>
+                </div>
+              </label>
+              <label class="flex items-start gap-2 p-2.5 rounded-lg border border-[var(--border)] bg-[var(--card)] cursor-pointer hover:border-[var(--primary)]">
+                <input type="radio" name="gcalDestRadio" value="calendar_busy" id="gcalDestCalendarBusy" class="mt-0.5 accent-[var(--primary)]">
+                <div>
+                  <div class="font-semibold text-[var(--foreground)]">🗓️ On Calendar (Events)</div>
+                  <div class="text-[10px] text-[var(--muted-foreground)]">Place directly on the calendar grid as busy/event blocks.</div>
+                </div>
+              </label>
+              <label class="flex items-start gap-2 p-2.5 rounded-lg border border-[var(--border)] bg-[var(--card)] cursor-pointer hover:border-[var(--primary)]">
+                <input type="radio" name="gcalDestRadio" value="calendar_assignment" id="gcalDestCalendarAssignment" class="mt-0.5 accent-[var(--primary)]">
+                <div>
+                  <div class="font-semibold text-[var(--foreground)]">📌 On Calendar (Tasks)</div>
+                  <div class="text-[10px] text-[var(--muted-foreground)]">Place on the calendar grid as pinned study assignments.</div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Calendar Feed / API / File Source -->
+        <div class="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--background)] space-y-3">
+          <div class="font-bold text-[var(--foreground)]">2. Connect or Import Google Calendar Data</div>
+
+          <!-- Option A: iCal URL -->
+          <div class="space-y-1">
+            <label for="gcalIcsUrlInput" class="block text-[11px] font-semibold text-[var(--foreground)]">Option A: Google Calendar iCal (`.ics`) Secret or Public URL</label>
+            <input id="gcalIcsUrlInput" type="url" placeholder="https://calendar.google.com/calendar/ical/.../basic.ics" class="w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] text-xs font-mono focus:outline-none focus:border-[var(--primary)]">
+            <p class="text-[10px] text-[var(--muted-foreground)]">In Google Calendar: <strong>Settings → [Your Calendar] → Integrate calendar → Secret address in iCal format</strong>.</p>
+          </div>
+
+          <!-- Option B: Upload or Paste .ics -->
+          <div class="pt-2 border-t border-[var(--border)] space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-[11px] font-semibold text-[var(--foreground)]">Option B: Upload or Paste `.ics` File (Works Immediately, Zero Setup)</span>
+              <label class="px-2.5 py-1 rounded-md border border-[var(--border)] bg-[var(--card)] hover:border-[var(--primary)] cursor-pointer font-semibold text-[var(--foreground)]">
+                📂 Choose .ics File
+                <input id="gcalIcsFileInput" type="file" accept=".ics,text/calendar" onchange="handleGcalFileUpload(event)" class="hidden">
+              </label>
+            </div>
+            <textarea id="gcalIcsPasteInput" placeholder="Optional: Paste raw .ics calendar contents here (BEGIN:VCALENDAR ... END:VCALENDAR)..." class="w-full h-16 p-2 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] text-[11px] font-mono focus:outline-none focus:border-[var(--primary)]"></textarea>
+          </div>
+
+          <!-- Option C: Google API / OAuth -->
+          <details class="pt-2 border-t border-[var(--border)]">
+            <summary class="cursor-pointer text-[11px] font-semibold text-[var(--foreground)] hover:text-[var(--primary)]">Option C: Direct Google Calendar API (OAuth Sign-In or API Key)</summary>
+            <div class="mt-2.5 space-y-2.5">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label for="gcalOauthClientIdInput" class="block text-[10px] font-semibold text-[var(--muted-foreground)] mb-1">Google OAuth Client ID (for Private Gmail Calendars)</label>
+                  <input id="gcalOauthClientIdInput" type="text" placeholder="123456789-abc.apps.googleusercontent.com" class="w-full px-2.5 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] text-[11px] font-mono focus:outline-none focus:border-[var(--primary)]">
+                </div>
+                <div>
+                  <label for="gcalApiKeyInput" class="block text-[10px] font-semibold text-[var(--muted-foreground)] mb-1">Google API Key (for Public Calendars)</label>
+                  <input id="gcalApiKeyInput" type="text" placeholder="AIzaSy..." class="w-full px-2.5 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] text-[11px] font-mono focus:outline-none focus:border-[var(--primary)]">
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <button type="button" onclick="startGoogleOAuthAndSync()" class="px-3 py-1.5 rounded-md border border-blue-500/40 bg-blue-500/10 hover:bg-blue-500/20 text-blue-700 font-semibold flex items-center gap-1.5">
+                  <span>🔐</span>
+                  <span>Sign in with Google &amp; Sync Calendar</span>
+                </button>
+                <span class="text-[10px] text-[var(--muted-foreground)]">Uses the Gmail Calendar ID above (reads events read-only).</span>
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <!-- Status & Last Sync Info -->
+        <div id="gcalStatusBox" class="p-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-xs text-[var(--muted-foreground)]">
+          Configure your Gmail calendar above, then click <strong>Save &amp; Import Now</strong>.
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-[var(--border)] shrink-0">
+        <button type="button" onclick="closeGoogleCalendarModal()" class="px-3 py-1.5 rounded-md border border-[var(--border)] text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
+          Close
+        </button>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="saveGoogleCalendarConfigOnly()" class="px-3.5 py-1.5 rounded-md border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--secondary)] text-xs font-semibold">
+            💾 Save Config
+          </button>
+          <button type="button" onclick="saveAndImportGoogleCalendar()" class="px-4 py-1.5 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm">
+            🔄 Save &amp; Import Now
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     // --- CONSTANTS & CONFIG ---
     const DAYS = [
@@ -1550,9 +1708,38 @@
         weekendStart: 10 * 60,
         weekendEnd: 22 * 60
       },
+      googleCalendarConfig: {
+        calendarEmail: '',
+        configuredBy: '',
+        importDestination: 'backlog',
+        defaultSubject: 'auto',
+        daysAhead: 7,
+        icsUrl: '',
+        apiKey: '',
+        oauthClientId: '',
+        lastSyncedAt: null,
+        lastSyncedBy: '',
+        lastSyncCount: 0
+      },
       assignments: [],
       busyBlocks: []
     };
+
+    function getDefaultGoogleCalendarConfig() {
+      return {
+        calendarEmail: '',
+        configuredBy: '',
+        importDestination: 'backlog',
+        defaultSubject: 'auto',
+        daysAhead: 7,
+        icsUrl: '',
+        apiKey: '',
+        oauthClientId: '',
+        lastSyncedAt: null,
+        lastSyncedBy: '',
+        lastSyncCount: 0
+      };
+    }
 
     let dragPayload = null;
     let editingDeadlineTaskId = null;
@@ -1686,6 +1873,7 @@
           weekendStart: 10 * 60,
           weekendEnd: 22 * 60
         },
+        googleCalendarConfig: getDefaultGoogleCalendarConfig(),
         assignments: [
           {
             id: 'task-1',
@@ -2462,7 +2650,20 @@
           e.icon || '📌',
           e.message || e.text || '',
           e.timeLabel || ''
-        ])
+        ]),
+        gc: s.googleCalendarConfig ? [
+          s.googleCalendarConfig.calendarEmail || '',
+          s.googleCalendarConfig.configuredBy || '',
+          s.googleCalendarConfig.importDestination || 'backlog',
+          s.googleCalendarConfig.defaultSubject || 'auto',
+          s.googleCalendarConfig.daysAhead || 7,
+          s.googleCalendarConfig.icsUrl || '',
+          s.googleCalendarConfig.apiKey || '',
+          s.googleCalendarConfig.oauthClientId || '',
+          s.googleCalendarConfig.lastSyncedAt || null,
+          s.googleCalendarConfig.lastSyncedBy || '',
+          s.googleCalendarConfig.lastSyncCount || 0
+        ] : null
       };
     }
 
@@ -2516,7 +2717,21 @@
           text: row[2] || '',
           message: row[2] || '',
           timeLabel: row[3] || ''
-        })) : []
+        })) : [],
+        googleCalendarConfig: Array.isArray(c.gc) ? {
+          ...getDefaultGoogleCalendarConfig(),
+          calendarEmail: c.gc[0] || '',
+          configuredBy: c.gc[1] || '',
+          importDestination: c.gc[2] || 'backlog',
+          defaultSubject: c.gc[3] || 'auto',
+          daysAhead: Number(c.gc[4]) || 7,
+          icsUrl: c.gc[5] || '',
+          apiKey: c.gc[6] || '',
+          oauthClientId: c.gc[7] || '',
+          lastSyncedAt: c.gc[8] || null,
+          lastSyncedBy: c.gc[9] || '',
+          lastSyncCount: Number(c.gc[10]) || 0
+        } : getDefaultGoogleCalendarConfig()
       };
     }
 
@@ -2593,7 +2808,11 @@
         viewMode: state.viewMode || 'rolling',
         selectedNewSize: state.selectedNewSize || 'L',
         nowConfig: state.nowConfig || { mode: 'live', customDay: 'Sat', customMin: 630 },
-        activityLog: Array.isArray(unpacked.activityLog) ? unpacked.activityLog : []
+        activityLog: Array.isArray(unpacked.activityLog) ? unpacked.activityLog : [],
+        googleCalendarConfig: {
+          ...getDefaultGoogleCalendarConfig(),
+          ...(unpacked.googleCalendarConfig || {})
+        }
       };
       try {
         localStorage.setItem(STORAGE_KEY + '_' + currentRoomId, JSON.stringify(state));
@@ -2793,7 +3012,11 @@
               ...getInitialDemoState(),
               ...parsed,
               activityLog: Array.isArray(parsed.activityLog) ? parsed.activityLog : [],
-              nowConfig: parsed.nowConfig || { mode: 'live', customDay: 'Sat', customMin: 630 }
+              nowConfig: parsed.nowConfig || { mode: 'live', customDay: 'Sat', customMin: 630 },
+              googleCalendarConfig: {
+                ...getDefaultGoogleCalendarConfig(),
+                ...(parsed.googleCalendarConfig || {})
+              }
             };
             return;
           }
@@ -4949,6 +5172,7 @@
       const todayMeta = metaMap[nowInfo.dayId];
 
       populateDueDayOptions();
+      if (typeof updateGoogleCalendarBadge === 'function') updateGoogleCalendarBadge();
 
       // Update role toggle buttons
       const sonBtn = document.getElementById('actorSonBtn');
@@ -6013,7 +6237,459 @@
       setBanner(`🍕 Added <strong>${escapeHtml(title)}</strong> on ${dayId} at ${formatMinutes(slotMin)}.`);
     }
 
+    // --- GOOGLE CALENDAR CONFIGURATION & IMPORT ---
+    function updateGoogleCalendarBadge() {
+      const badge = document.getElementById('settingsGcalBadge');
+      if (!badge) return;
+      const cfg = state.googleCalendarConfig || getDefaultGoogleCalendarConfig();
+      if (cfg.calendarEmail) {
+        badge.textContent = cfg.calendarEmail;
+        badge.className = 'text-[10px] text-emerald-700 font-semibold truncate max-w-[110px]';
+      } else {
+        badge.textContent = 'Setup';
+        badge.className = 'text-[10px] text-[var(--muted-foreground)] truncate max-w-[110px]';
+      }
+    }
+
+    function openGoogleCalendarModal() {
+      const cfg = state.googleCalendarConfig || getDefaultGoogleCalendarConfig();
+      const roleBadge = document.getElementById('gcalRoleBadge');
+      if (roleBadge) roleBadge.textContent = `Configuring as ${currentActor || 'Son'}`;
+
+      const emailEl = document.getElementById('gcalEmailInput');
+      const subjEl = document.getElementById('gcalDefaultSubject');
+      const daysEl = document.getElementById('gcalDaysAhead');
+      const icsUrlEl = document.getElementById('gcalIcsUrlInput');
+      const apiKeyEl = document.getElementById('gcalApiKeyInput');
+      const clientIdEl = document.getElementById('gcalOauthClientIdInput');
+
+      if (emailEl) emailEl.value = cfg.calendarEmail || '';
+      if (subjEl) subjEl.value = cfg.defaultSubject || 'auto';
+      if (daysEl) daysEl.value = String(cfg.daysAhead || 7);
+      if (icsUrlEl) icsUrlEl.value = cfg.icsUrl || '';
+      if (apiKeyEl) apiKeyEl.value = cfg.apiKey || '';
+      if (clientIdEl) clientIdEl.value = cfg.oauthClientId || '';
+
+      const dest = cfg.importDestination || 'backlog';
+      const backlogRadio = document.getElementById('gcalDestBacklog');
+      const busyRadio = document.getElementById('gcalDestCalendarBusy');
+      const assignRadio = document.getElementById('gcalDestCalendarAssignment');
+      if (backlogRadio) backlogRadio.checked = dest === 'backlog';
+      if (busyRadio) busyRadio.checked = dest === 'calendar_busy';
+      if (assignRadio) assignRadio.checked = dest === 'calendar_assignment';
+
+      const metaEl = document.getElementById('gcalConfigMeta');
+      if (metaEl) {
+        if (cfg.calendarEmail) {
+          metaEl.textContent = `Configured by ${cfg.configuredBy || 'Family'}: ${cfg.calendarEmail}`;
+        } else {
+          metaEl.textContent = 'Not configured yet';
+        }
+      }
+
+      const statusBox = document.getElementById('gcalStatusBox');
+      if (statusBox) {
+        if (cfg.lastSyncedAt) {
+          const dt = new Date(cfg.lastSyncedAt);
+          statusBox.innerHTML = `✅ Last imported <strong>${cfg.lastSyncCount || 0}</strong> event(s) from <strong>${escapeHtml(cfg.calendarEmail || 'Google Calendar')}</strong> by <strong>${escapeHtml(cfg.lastSyncedBy || 'Family')}</strong> on ${dt.toLocaleString()}.`;
+        } else {
+          statusBox.innerHTML = 'Configure your Gmail calendar above, then click <strong>Save &amp; Import Now</strong>.';
+        }
+      }
+
+      const modal = document.getElementById('googleCalendarModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function closeGoogleCalendarModal() {
+      const modal = document.getElementById('googleCalendarModal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    function readGoogleCalendarFormIntoState() {
+      const prev = state.googleCalendarConfig || getDefaultGoogleCalendarConfig();
+      const destRadio = document.querySelector('input[name="gcalDestRadio"]:checked');
+      state.googleCalendarConfig = {
+        ...prev,
+        calendarEmail: (document.getElementById('gcalEmailInput')?.value || '').trim(),
+        configuredBy: currentActor || 'Son',
+        importDestination: destRadio ? destRadio.value : 'backlog',
+        defaultSubject: document.getElementById('gcalDefaultSubject')?.value || 'auto',
+        daysAhead: Number(document.getElementById('gcalDaysAhead')?.value) || 7,
+        icsUrl: (document.getElementById('gcalIcsUrlInput')?.value || '').trim(),
+        apiKey: (document.getElementById('gcalApiKeyInput')?.value || '').trim(),
+        oauthClientId: (document.getElementById('gcalOauthClientIdInput')?.value || '').trim()
+      };
+      return state.googleCalendarConfig;
+    }
+
+    function saveGoogleCalendarConfigOnly() {
+      const cfg = readGoogleCalendarFormIntoState();
+      logActivity(`Updated Google Calendar config (${cfg.calendarEmail || 'no email'} → ${cfg.importDestination})`, '📅');
+      saveState();
+      renderAll();
+      const statusBox = document.getElementById('gcalStatusBox');
+      if (statusBox) {
+        statusBox.innerHTML = `💾 Saved configuration for <strong>${escapeHtml(cfg.calendarEmail || 'Google Calendar')}</strong> (${escapeHtml(cfg.importDestination)}) to the synced database.`;
+      }
+      setBanner(`📅 Google Calendar settings saved to database by ${currentActor}.`);
+    }
+
+    function handleGcalFileUpload(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const pasteEl = document.getElementById('gcalIcsPasteInput');
+        if (pasteEl) pasteEl.value = String(reader.result || '');
+        const statusBox = document.getElementById('gcalStatusBox');
+        if (statusBox) {
+          statusBox.innerHTML = `📄 Loaded <strong>${escapeHtml(file.name)}</strong>. Click <strong>Save &amp; Import Now</strong> to add events.`;
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function gcalHashUid(str) {
+      let h = 2166136261;
+      const s = String(str || '');
+      for (let i = 0; i < s.length; i++) {
+        h ^= s.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return (h >>> 0).toString(36);
+    }
+
+    function parseIcsDateTime(rawVal) {
+      if (!rawVal) return null;
+      const val = rawVal.trim();
+      // All-day: YYYYMMDD
+      const dateOnly = val.match(/^(\d{4})(\d{2})(\d{2})$/);
+      if (dateOnly) {
+        return {
+          date: new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]), 9, 0, 0),
+          allDay: true
+        };
+      }
+      // Date-time: YYYYMMDDTHHMMSS(Z?)
+      const dtMatch = val.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z?)$/);
+      if (dtMatch) {
+        const yr = Number(dtMatch[1]);
+        const mo = Number(dtMatch[2]) - 1;
+        const dy = Number(dtMatch[3]);
+        const hr = Number(dtMatch[4]);
+        const mn = Number(dtMatch[5]);
+        const sc = Number(dtMatch[6]);
+        const date = dtMatch[7] === 'Z'
+          ? new Date(Date.UTC(yr, mo, dy, hr, mn, sc))
+          : new Date(yr, mo, dy, hr, mn, sc);
+        return { date, allDay: false };
+      }
+      return null;
+    }
+
+    function unescapeIcsText(str) {
+      return String(str || '')
+        .replace(/\\n/gi, ' ')
+        .replace(/\\,/g, ',')
+        .replace(/\\;/g, ';')
+        .replace(/\\\\/g, '\\')
+        .trim();
+    }
+
+    function parseIcsEvents(icsText) {
+      // Unfold RFC 5545 folded lines
+      const unfolded = String(icsText || '').replace(/\r\n[ \t]/g, '').replace(/\n[ \t]/g, '');
+      const lines = unfolded.split(/\r?\n/);
+      const events = [];
+      let cur = null;
+
+      for (const line of lines) {
+        if (line === 'BEGIN:VEVENT') {
+          cur = {};
+          continue;
+        }
+        if (line === 'END:VEVENT') {
+          if (cur && cur.summary && cur.start) events.push(cur);
+          cur = null;
+          continue;
+        }
+        if (!cur) continue;
+
+        const colonIdx = line.indexOf(':');
+        if (colonIdx === -1) continue;
+        const propPart = line.slice(0, colonIdx);
+        const valPart = line.slice(colonIdx + 1);
+        const propName = propPart.split(';')[0].toUpperCase();
+
+        if (propName === 'UID') cur.uid = valPart.trim();
+        else if (propName === 'SUMMARY') cur.summary = unescapeIcsText(valPart);
+        else if (propName === 'DESCRIPTION') cur.description = unescapeIcsText(valPart);
+        else if (propName === 'DTSTART') cur.start = parseIcsDateTime(valPart);
+        else if (propName === 'DTEND') cur.end = parseIcsDateTime(valPart);
+      }
+      return events;
+    }
+
+    function detectGcalSubject(title, defaultSubject) {
+      if (defaultSubject && defaultSubject !== 'auto') return defaultSubject;
+      const lower = String(title || '').toLowerCase();
+      if (/\b(math|calc|algebra|geometry|trig|stat)\b/.test(lower)) return 'Math';
+      if (/\b(chem|bio|physics|science|lab)\b/.test(lower)) return 'Science';
+      if (/\b(english|lit|essay|reading|writing)\b/.test(lower)) return 'English';
+      if (/\b(history|apush|gov|econ|dbq|world)\b/.test(lower)) return 'History';
+      if (/\b(spanish|french|latin|mandarin|language|vocab)\b/.test(lower)) return 'Language';
+      if (/\b(cs|code|coding|python|java|tech|computer)\b/.test(lower)) return 'CS';
+      return 'Other';
+    }
+
+    function applyImportedGoogleEvents(events, cfg) {
+      const now = new Date();
+      const windowStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+      const windowEnd = new Date(windowStart);
+      windowEnd.setDate(windowEnd.getDate() + (Number(cfg.daysAhead) || 7));
+
+      const dest = cfg.importDestination || 'backlog';
+      let importedCount = 0;
+
+      for (const ev of events) {
+        if (!ev.start || !ev.start.date) continue;
+        const startDate = ev.start.date;
+        if (startDate < windowStart || startDate > windowEnd) continue;
+
+        const uid = ev.uid || `${ev.summary}_${startDate.toISOString()}`;
+        const uidHash = gcalHashUid(uid);
+        const dayId = getJsDayToId(startDate.getDay());
+
+        let durationMin = 60;
+        if (ev.end && ev.end.date && !ev.start.allDay) {
+          const diffMin = Math.round((ev.end.date.getTime() - startDate.getTime()) / 60000);
+          if (diffMin > 0) durationMin = diffMin;
+        } else if (ev.start.allDay) {
+          durationMin = 30;
+        }
+        const snappedDuration = Math.max(MIN_SCHED_STEP, Math.min(240, Math.round(durationMin / MIN_SCHED_STEP) * MIN_SCHED_STEP));
+
+        let startMin = ev.start.allDay ? 9 * 60 : (startDate.getHours() * 60 + startDate.getMinutes());
+        startMin = Math.round(startMin / MIN_SCHED_STEP) * MIN_SCHED_STEP;
+        startMin = Math.max(GRID_START_MIN, Math.min(GRID_END_MIN - snappedDuration, startMin));
+
+        if (dest === 'calendar_busy') {
+          const blockId = `gcalb_${uidHash}`;
+          const existing = state.busyBlocks.find(b => b.id === blockId);
+          const payload = {
+            id: blockId,
+            title: ev.summary,
+            day: dayId,
+            startMin,
+            minutes: snappedDuration
+          };
+          if (existing) Object.assign(existing, payload);
+          else state.busyBlocks.push(payload);
+          importedCount++;
+        } else {
+          const prefix = dest === 'calendar_assignment' ? 'gcala_' : 'gcal_';
+          const taskId = `${prefix}${uidHash}`;
+          const existing = state.assignments.find(a => a.id === taskId);
+          const subject = detectGcalSubject(ev.summary, cfg.defaultSubject);
+          const priority = /\b(exam|test|quiz|midterm|final|due|project)\b/i.test(ev.summary) ? 'high' : 'normal';
+          const isOnCal = dest === 'calendar_assignment';
+
+          const payload = {
+            id: taskId,
+            title: ev.summary,
+            subject,
+            size: getSizeForMinutes(snappedDuration),
+            minutes: snappedDuration,
+            priority,
+            dueDay: dayId,
+            dueMin: startMin,
+            completed: existing ? !!existing.completed : false,
+            day: isOnCal ? dayId : (existing ? existing.day : null),
+            startMin: isOnCal ? startMin : (existing ? existing.startMin : null),
+            isPinned: isOnCal,
+            isSuggested: false
+          };
+          if (existing) Object.assign(existing, payload);
+          else state.assignments.push(payload);
+          importedCount++;
+        }
+      }
+
+      state.googleCalendarConfig = {
+        ...cfg,
+        lastSyncedAt: Date.now(),
+        lastSyncedBy: currentActor || 'Son',
+        lastSyncCount: importedCount
+      };
+
+      logActivity(`Imported ${importedCount} event(s) from ${cfg.calendarEmail || 'Google Calendar'} → ${dest === 'backlog' ? 'Unscheduled Backlog' : 'Calendar'}`, '📅');
+      saveState();
+      renderAll();
+      return importedCount;
+    }
+
+    async function fetchIcsWithFallback(url) {
+      const attempts = [
+        url,
+        `https://corsproxy.io/?${encodeURIComponent(url)}`,
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
+      ];
+      let lastErr = null;
+      for (const target of attempts) {
+        try {
+          const res = await fetch(target);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const text = await res.text();
+          if (text && text.includes('BEGIN:VCALENDAR')) return text;
+        } catch (err) {
+          lastErr = err;
+        }
+      }
+      throw lastErr || new Error('Could not fetch .ics feed (CORS or invalid URL)');
+    }
+
+    async function fetchGoogleCalendarApiEvents(cfg, accessToken) {
+      const calId = cfg.calendarEmail || 'primary';
+      const now = new Date();
+      const timeMin = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).toISOString();
+      const maxDate = new Date(now);
+      maxDate.setDate(maxDate.getDate() + (Number(cfg.daysAhead) || 7));
+      const timeMax = maxDate.toISOString();
+
+      let url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events?timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}&singleEvents=true&orderBy=startTime`;
+      const headers = {};
+      if (accessToken) {
+        headers['Authorization'] = `Bearer ${accessToken}`;
+      } else if (cfg.apiKey) {
+        url += `&key=${encodeURIComponent(cfg.apiKey)}`;
+      } else {
+        throw new Error('Provide an OAuth token or Google API Key.');
+      }
+
+      const res = await fetch(url, { headers });
+      if (!res.ok) {
+        const errBody = await res.text();
+        throw new Error(`Google Calendar API error (${res.status}): ${errBody.slice(0, 140)}`);
+      }
+      const data = await res.json();
+      return (data.items || []).map(item => {
+        const isAllDay = !!(item.start && item.start.date && !item.start.dateTime);
+        const startDate = isAllDay
+          ? parseIcsDateTime(item.start.date.replace(/-/g, ''))?.date
+          : new Date(item.start.dateTime);
+        const endDate = isAllDay
+          ? parseIcsDateTime(item.end.date.replace(/-/g, ''))?.date
+          : new Date(item.end.dateTime);
+        return {
+          uid: item.id || item.iCalUID,
+          summary: item.summary || 'Untitled Calendar Event',
+          description: item.description || '',
+          start: startDate ? { date: startDate, allDay: isAllDay } : null,
+          end: endDate ? { date: endDate, allDay: isAllDay } : null
+        };
+      });
+    }
+
+    async function saveAndImportGoogleCalendar(oauthTokenOverride) {
+      const cfg = readGoogleCalendarFormIntoState();
+      const statusBox = document.getElementById('gcalStatusBox');
+      const pastedIcs = (document.getElementById('gcalIcsPasteInput')?.value || '').trim();
+
+      if (statusBox) statusBox.innerHTML = '⏳ Importing events from Google Calendar...';
+
+      try {
+        let events = [];
+        if (oauthTokenOverride) {
+          events = await fetchGoogleCalendarApiEvents(cfg, oauthTokenOverride);
+        } else if (pastedIcs) {
+          events = parseIcsEvents(pastedIcs);
+        } else if (cfg.icsUrl) {
+          const icsText = await fetchIcsWithFallback(cfg.icsUrl);
+          events = parseIcsEvents(icsText);
+        } else if (cfg.apiKey && cfg.calendarEmail) {
+          events = await fetchGoogleCalendarApiEvents(cfg, null);
+        } else {
+          const cachedToken = sessionStorage.getItem('studyflow_gcal_token');
+          if (cachedToken && cfg.calendarEmail) {
+            events = await fetchGoogleCalendarApiEvents(cfg, cachedToken);
+          } else {
+            saveState();
+            renderAll();
+            if (statusBox) {
+              statusBox.innerHTML = '⚠️ Configuration saved! To import events, provide an <strong>iCal (.ics) URL</strong>, upload/paste a <strong>.ics file</strong>, or use <strong>Sign in with Google</strong> / <strong>API Key</strong>.';
+            }
+            return;
+          }
+        }
+
+        const count = applyImportedGoogleEvents(events, cfg);
+        const destLabel = cfg.importDestination === 'backlog' ? 'Unscheduled Backlog' : 'Calendar';
+        if (statusBox) {
+          statusBox.innerHTML = `✅ Imported <strong>${count}</strong> event(s) from <strong>${escapeHtml(cfg.calendarEmail || 'Google Calendar')}</strong> into <strong>${destLabel}</strong> and saved to the database!`;
+        }
+        setBanner(`📅 Imported ${count} Google Calendar event(s) into ${destLabel} & saved to database.`);
+      } catch (err) {
+        saveState();
+        renderAll();
+        if (statusBox) {
+          statusBox.innerHTML = `❌ Import failed: ${escapeHtml(err.message || String(err))}. Tip: Export your calendar as <code>.ics</code> from Google Calendar and use Option B above.`;
+        }
+      }
+    }
+
+    function startGoogleOAuthAndSync() {
+      const cfg = readGoogleCalendarFormIntoState();
+      if (!cfg.oauthClientId) {
+        const statusBox = document.getElementById('gcalStatusBox');
+        if (statusBox) {
+          statusBox.innerHTML = '⚠️ Enter a <strong>Google OAuth Client ID</strong> in Option C first (or use Option A/B with an `.ics` link/file).';
+        }
+        return;
+      }
+      const redirectUri = window.location.origin + window.location.pathname;
+      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(cfg.oauthClientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${encodeURIComponent('https://www.googleapis.com/auth/calendar.readonly')}&prompt=consent`;
+      const popup = window.open(authUrl, 'studyflow_gcal_oauth', 'width=520,height=640');
+      if (!popup) {
+        const statusBox = document.getElementById('gcalStatusBox');
+        if (statusBox) statusBox.innerHTML = '⚠️ Popup blocked. Allow popups for this site and try again.';
+        return;
+      }
+      const handler = (e) => {
+        if (e.key === 'studyflow_gcal_oauth_token' && e.newValue) {
+          window.removeEventListener('storage', handler);
+          sessionStorage.setItem('studyflow_gcal_token', e.newValue);
+          localStorage.removeItem('studyflow_gcal_oauth_token');
+          saveAndImportGoogleCalendar(e.newValue);
+        }
+      };
+      window.addEventListener('storage', handler);
+    }
+
+    function checkGoogleOAuthRedirect() {
+      if (window.location.hash && window.location.hash.includes('access_token=')) {
+        const params = new URLSearchParams(window.location.hash.slice(1));
+        const token = params.get('access_token');
+        if (token) {
+          try {
+            localStorage.setItem('studyflow_gcal_oauth_token', token);
+            sessionStorage.setItem('studyflow_gcal_token', token);
+          } catch (e) {}
+          if (window.opener) {
+            window.close();
+          }
+        }
+      }
+    }
+
     // --- INIT ---
+    checkGoogleOAuthRedirect();
     populateTimeSelects();
     loadState();
     initVaultGate();
